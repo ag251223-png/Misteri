@@ -1,3 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 AU Interaktif: The Last Message</title>
+    <style>
+        :root {
+            --bg-color: #0b141a;
+            --chat-bg: #0b141a;
+            --text-main: #e9edef;
+            --bubble-incoming: #202c33;
+            --bubble-outgoing: #005c4b;
+            --accent: #00a884;
+            --system-msg: #182229;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #1f2c34;
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 420px;
+            height: 92vh;
+            background-color: var(--chat-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 4px solid #2f3b43;
+            position: relative;
+        }
+
+        .chat-header {
+            background-color: #202c33;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #2f3b43;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #536471;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .user-info .name {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .user-info .status {
+            font-size: 0.75rem;
+            color: var(--accent);
+            height: 15px;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+        }
+
+        .bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+            opacity: 0;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        .incoming {
+            background-color: var(--bubble-incoming);
+            align-self: flex-start;
+            border-top-left-radius: 0;
+        }
+
+        .outgoing {
+            background-color: var(--bubble-outgoing);
+            align-self: flex-end;
+            border-top-right-radius: 0;
+        }
+
+        .system {
+            background-color: var(--system-msg);
+            color: #8696a0;
+            align-self: center;
+            font-size: 0.8rem;
+            text-align: center;
+            border-radius: 6px;
+            max-width: 90%;
+            padding: 5px 10px;
+        }
+
+        .choices-container {
+            background-color: #111b21;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-top: 1px solid #2f3b43;
+        }
+
+        .btn-choice {
+            background-color: #202c33;
+            color: var(--text-main);
+            border: 1px solid #3d4a54;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .btn-choice:hover {
+            background-color: #2a3942;
+        }
+
+        .btn-reset {
+            background-color: #8c1d1d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <button class="btn-reset" onclick="resetGame()">Reset Game</button>
+    
+    <div class="chat-header">
+        <div class="avatar">❓</div>
+        <div class="user-info">
+            <div class="name" id="chat-name">Nomor Tidak Dikenal</div>
+            <div class="status" id="chat-status">online</div>
+        </div>
+    </div>
+
+    <div class="chat-body" id="chat-body"></div>
+    <div class="choices-container" id="choices-container"></div>
+</div>
+
 <script>
     const storyData = {
         start: {
@@ -61,7 +242,7 @@
             messages: [
                 { type: "system", text: "Polisi tiba di sekolah dalam 10 menit." },
                 { type: "system", text: "🏆 ENDING: THE TRUE SAVIOR" },
-                { type: "system", text: "Pelaku yang ternyata mantan alumni gangguan jiwa berhasil diringkus. Karin selamat meski trauma berat. Kamu adalah pahlawan." }
+                { type: "system", text: "Pelahu yang ternyata mantan alumni gangguan jiwa berhasil diringkus. Karin selamat meski trauma berat. Kamu adalah pahlawan." }
             ],
             choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
         },
@@ -86,68 +267,58 @@
                 { type: "system", text: "Kamu memeriksa meja guru..." },
                 { type: "system", text: "🕸️ ENDING: IT'S A TRAP" },
                 { type: "system", text: "Di atas meja ada HP Karin yang menyala. Tiba-tiba pintu Lab menutup otomatis dan terkunci. Di dalam lemari bukan Karin, melainkan sebuah boneka perekam suara..." }
-            ],
-            choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
-        }
-    };
-
-    let chatBody = document.getElementById('chat-body');
-    let choicesContainer = document.getElementById('choices-container');
-    let chatName = document.getElementById('chat-name');
-    let chatStatus = document.getElementById('chat-status');
-
-    function resetGame() {
-        chatBody.innerHTML = '';
-        renderNode('start');
-    }
-
-    function renderNode(nodeKey) {
-        const node = storyData[nodeKey];
-        chatBody.innerHTML = ''; 
-        choicesContainer.innerHTML = ''; 
-        
-        if (node.name) {
-            chatName.innerText = node.name;
-        } else {
-            chatName.innerText = "0812-334X-XXXX";
-        }
-
-        let delay = 0;
-        node.messages.forEach((msg) => {
-            delay += 800; 
-            
-            setTimeout(() => {
-                if (msg.type === 'incoming') {
-                    chatStatus.innerText = 'typing...';
-                    setTimeout(() => { chatStatus.innerText = 'online'; }, 500);
-                }
-                appendBubble(msg.text, msg.type);
-            }, delay);
-        });
-
-        setTimeout(() => {
-            node.choices.forEach(choice => {
-                const button = document.createElement('button');
-                button.innerText = choice.text;
-                button.classList.add('btn-choice');
-                button.onclick = () => {
-                    renderNode(choice.nextNode);
-                };
-                choicesContainer.appendChild(button);
-            });
-        }, delay + 500);
-    }
-
-    function appendBubble(text, type) {
-        const bubble = document.createElement('div');
-        bubble.classList.add('bubble', type);
-        bubble.innerText = text;
-        chatBody.appendChild(bubble);
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }
-
-    // Selalu paksa jalankan dari titik paling awal saat web dibuka
-    window.onload = function() {
-        resetGame();
-    };
-</script>
+Gunakan kode dengan hati-hati.
+],
+choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+}
+};
+let chatBody = document.getElementById('chat-body');
+let choicesContainer = document.getElementById('choices-container');
+let chatName = document.getElementById('chat-name');
+let chatStatus = document.getElementById('chat-status');
+function resetGame() {
+chatBody.innerHTML = '';
+renderNode('start');
+}
+function renderNode(nodeKey) {
+const node = storyData[nodeKey];
+chatBody.innerHTML = '';
+choicesContainer.innerHTML = '';
+if (node.name) {
+chatName.innerText = node.name;
+} else {
+chatName.innerText = "0812-334X-XXXX";
+}
+let delay = 0;
+node.messages.forEach((msg) => {
+delay += 800;
+setTimeout(() => {
+if (msg.type === 'incoming') {
+chatStatus.innerText = 'typing...';
+setTimeout(() => { chatStatus.innerText = 'online'; }, 500);
+}
+appendBubble(msg.text, msg.type);
+}, delay);
+});
+setTimeout(() => {
+node.choices.forEach(choice => {
+const button = document.createElement('button');
+button.innerText = choice.text;
+button.classList.add('btn-choice');
+button.onclick = () => {
+renderNode(choice.nextNode);
+};
+choicesContainer.appendChild(button);
+});
+}, delay + 500);
+}
+function appendBubble(text, type) {
+const bubble = document.createElement('div');
+bubble.classList.add('bubble', type);
+bubble.innerText = text;
+chatBody.appendChild(bubble);
+chatBody.scrollTop = chatBody.scrollHeight;
+}
+window.onload = function() {
+resetGame();
+};
