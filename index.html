@@ -1,0 +1,153 @@
+<script>
+    const storyData = {
+        start: {
+            name: "0812-334X-XXXX",
+            messages: [
+                { type: "system", text: "23:42 PM" },
+                { type: "incoming", text: "P" },
+                { type: "incoming", text: "Tolongin gue... Siapapun yang megang nomor ini." },
+                { type: "incoming", text: "Gue kekunci di Lab Kimia lama. Ada orang di luar bawa pisau, dia nyariin gue." }
+            ],
+            choices: [
+                { text: "💬 Balas: 'Ini siapa? Jangan nge-prank malam-malam!'", nextNode: "balasPrank" },
+                { text: "🚫 Abaikan & langsung blokir nomornya.", nextNode: "endingBlokir" }
+            ]
+        },
+        balasPrank: {
+            messages: [
+                { type: "outgoing", text: "Ini siapa? Jangan nge-prank malam-malam!" },
+                { type: "incoming", text: "Gue Karin, anak OSIS! Sumpah demi tuhan ini bukan prank." },
+                { type: "incoming", text: "Lampu sekolah dimatiin semua. Langkah kakinya makin deket ke pintu Lab..." }
+            ],
+            choices: [
+                { text: "📞 'Gue telepon Pak Doni (Satpam) sekarang!'", nextNode: "teleponSatpam" },
+                { text: "🤫 'Sembunyi di lemari belakang, jangan bikin suara! Gue jalan ke sana.'", nextNode: "nekatKeSekolah" }
+            ]
+        },
+        teleponSatpam: {
+            messages: [
+                { type: "outgoing", text: "Gue telepon Pak Doni (Satpam) sekarang!" },
+                { type: "system", text: "Anda mencoba menghubungi Pak Doni..." },
+                { type: "system", text: "Nomor yang Anda tuju sedang tidak aktif." },
+                { type: "incoming", text: "GAK BISA! Pak Doni udah pingsan di pos tadi gue liat 😭" },
+                { type: "incoming", text: "PINTUNYA MULAI DIDOBRAK! DIALAH ORANGNYA!" }
+            ],
+            choices: [
+                { text: "🚨 Panggil Polisi", nextNode: "endingPolisi" },
+                { text: "🏃 Langsung lari ke sekolah bawa balok kayu", nextNode: "endingHoror" }
+            ]
+        },
+        nekatKeSekolah: {
+            messages: [
+                { type: "outgoing", text: "Sembunyi di lemari belakang, jangan bikin suara! Gue jalan ke sana." },
+                { type: "incoming", text: "Oke... gue masuk lemari. Buruan plis, napas gue sesak..." },
+                { type: "system", text: "Karin terakhir terlihat 3 menit yang lalu." },
+                { type: "system", text: "Anda sampai di Lab Kimia. Pintu terbuka lebar, pecahan kaca berserakan. Lemari di belakang terkunci dari luar." }
+            ],
+            choices: [
+                { text: "🔓 Buka paksa lemarinya", nextNode: "endingSelamat" },
+                { text: "🔍 Cari petunjuk di sekitar meja guru", nextNode: "endingJebakan" }
+            ]
+        },
+        endingBlokir: {
+            messages: [
+                { type: "system", text: "Anda memblokir kontak ini." },
+                { type: "system", text: "❌ ENDING: IGNORED IGNORANCE" },
+                { type: "system", text: "Keesokan paginya, sekolah gempar. Karin ditemukan menghilang tanpa jejak. Anda dihantui rasa bersalah seumur hidup." }
+            ],
+            choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+        },
+        endingPolisi: {
+            messages: [
+                { type: "system", text: "Polisi tiba di sekolah dalam 10 menit." },
+                { type: "system", text: "🏆 ENDING: THE TRUE SAVIOR" },
+                { type: "system", text: "Pelaku yang ternyata mantan alumni gangguan jiwa berhasil diringkus. Karin selamat meski trauma berat. Kamu adalah pahlawan." }
+            ],
+            choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+        },
+        endingHoror: {
+            messages: [
+                { type: "system", text: "Kamu sampai di koridor sekolah yang gelap gulita..." },
+                { type: "system", text: "💀 ENDING: DOUBLE CASUALTY" },
+                { type: "system", text: "Kamu diserang dari belakang sebelum sempat mencapai Lab Kimia. Layar HP-mu retak di lantai, menampilkan chat terakhir Karin yang belum terbaca." }
+            ],
+            choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+        },
+        endingSelamat: {
+            messages: [
+                { type: "system", text: "Kamu mendobrak lemari! Karin memelukmu sambil menangis." },
+                { type: "system", text: "🏅 ENDING: HEROIC RESCUE" },
+                { type: "system", text: "Kalian berhasil kabur lewat jendela sebelum pelaku menyadari. Misteri pelaku malam itu masih diselidiki, tapi kalian aman bersama." }
+            ],
+            choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+        },
+        endingJebakan: {
+            messages: [
+                { type: "system", text: "Kamu memeriksa meja guru..." },
+                { type: "system", text: "🕸️ ENDING: IT'S A TRAP" },
+                { type: "system", text: "Di atas meja ada HP Karin yang menyala. Tiba-tiba pintu Lab menutup otomatis dan terkunci. Di dalam lemari bukan Karin, melainkan sebuah boneka perekam suara..." }
+            ],
+            choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+        }
+    };
+
+    let chatBody = document.getElementById('chat-body');
+    let choicesContainer = document.getElementById('choices-container');
+    let chatName = document.getElementById('chat-name');
+    let chatStatus = document.getElementById('chat-status');
+
+    function resetGame() {
+        chatBody.innerHTML = '';
+        renderNode('start');
+    }
+
+    function renderNode(nodeKey) {
+        const node = storyData[nodeKey];
+        chatBody.innerHTML = ''; 
+        choicesContainer.innerHTML = ''; 
+        
+        if (node.name) {
+            chatName.innerText = node.name;
+        } else {
+            chatName.innerText = "0812-334X-XXXX";
+        }
+
+        let delay = 0;
+        node.messages.forEach((msg) => {
+            delay += 800; 
+            
+            setTimeout(() => {
+                if (msg.type === 'incoming') {
+                    chatStatus.innerText = 'typing...';
+                    setTimeout(() => { chatStatus.innerText = 'online'; }, 500);
+                }
+                appendBubble(msg.text, msg.type);
+            }, delay);
+        });
+
+        setTimeout(() => {
+            node.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.innerText = choice.text;
+                button.classList.add('btn-choice');
+                button.onclick = () => {
+                    renderNode(choice.nextNode);
+                };
+                choicesContainer.appendChild(button);
+            });
+        }, delay + 500);
+    }
+
+    function appendBubble(text, type) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble', type);
+        bubble.innerText = text;
+        chatBody.appendChild(bubble);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Selalu paksa jalankan dari titik paling awal saat web dibuka
+    window.onload = function() {
+        resetGame();
+    };
+</script>
