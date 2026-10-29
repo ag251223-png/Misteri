@@ -1,633 +1,1045 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0b141a">
-    <title>📱 AU Interaktif: The Last Message</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#202b38">
+<title>iOS AU Simulator</title>
 
-    <style>
-        :root {
-            --chat-bg: #0b141a;
-            --text-main: #e9edef;
-            --bubble-incoming: #202c33;
-            --bubble-outgoing: #005c4b;
-            --accent: #00a884;
-            --system-msg: #182229;
-        }
+<style>
+:root {
+    --green: #25D366;
+    --glass: rgba(255,255,255,.17);
+    --dark: #101820;
+}
 
-        * {
-            box-sizing: border-box;
-        }
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                Roboto, Helvetica, Arial, sans-serif;
-            background: #1f2c34;
-            color: var(--text-main);
-            margin: 0;
-            min-height: 100vh;
-            min-height: 100dvh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 12px;
-        }
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #151a20;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Roboto, sans-serif;
+}
 
-        .phone-container {
-            width: 100%;
-            max-width: 420px;
-            height: 92vh;
-            height: 92dvh;
-            min-height: 400px;
-            background: var(--chat-bg);
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 4px solid #2f3b43;
-            position: relative;
-        }
+button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
 
-        .chat-header {
-            background: #202c33;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid #2f3b43;
-            flex-shrink: 0;
-        }
+.phone-container {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    height: 92vh;
+    height: 92dvh;
+    min-height: 480px;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 20% 15%, #aab9c9 0%, transparent 38%),
+        radial-gradient(ellipse at 85% 65%, #8b9eaf 0%, transparent 38%),
+        linear-gradient(145deg, #526477, #202d3b 60%, #111b27);
+    border: 5px solid #34373d;
+    border-radius: 42px;
+    box-shadow: 0 20px 60px #0009;
+}
 
-        .avatar {
-            width: 40px;
-            height: 40px;
-            flex-shrink: 0;
-            background: #536471;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
+.dynamic-island {
+    position: absolute;
+    z-index: 100;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 105px;
+    height: 29px;
+    border-radius: 30px;
+    background: #050505;
+}
 
-        .user-info {
-            min-width: 0;
-        }
+.status-bar {
+    position: absolute;
+    z-index: 99;
+    top: 12px;
+    left: 24px;
+    right: 24px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    pointer-events: none;
+}
 
-        .user-info .name {
-            font-weight: bold;
-            font-size: 1rem;
-            overflow-wrap: anywhere;
-        }
+.screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
 
-        .user-info .status {
-            font-size: 0.75rem;
-            color: var(--accent);
-            min-height: 15px;
-        }
+.screen.active-screen {
+    display: flex;
+}
 
-        .chat-body {
-            flex: 1;
-            min-height: 0;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            scroll-behavior: smooth;
-        }
+.lock-time {
+    margin-top: 75px;
+    text-align: center;
+    text-shadow: 0 2px 12px #0003;
+}
 
-        .bubble {
-            max-width: 85%;
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            overflow-wrap: anywhere;
-            white-space: pre-wrap;
-            animation: fadeIn 0.3s ease forwards;
-        }
+.lock-date {
+    font-size: 16px;
+    margin-bottom: 3px;
+}
 
-        .incoming {
-            background: var(--bubble-incoming);
-            align-self: flex-start;
-            border-top-left-radius: 0;
-        }
+.lock-time h1 {
+    font-size: clamp(65px, 18vw, 88px);
+    font-weight: 250;
+    line-height: 1.1;
+    margin: 0;
+    letter-spacing: -3px;
+}
 
-        .outgoing {
-            background: var(--bubble-outgoing);
-            align-self: flex-end;
-            border-top-right-radius: 0;
-        }
+.lock-subtitle {
+    font-size: 13px;
+    opacity: .85;
+    margin-top: 8px;
+}
 
-        .system {
-            background: var(--system-msg);
-            color: #aebac1;
-            align-self: center;
-            font-size: 0.8rem;
-            text-align: center;
-            border-radius: 8px;
-            max-width: 95%;
-            padding: 7px 10px;
-        }
+.notification-center {
+    margin-top: auto;
+    padding: 18px;
+}
 
-        .choices-container {
-            background: #111b21;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border-top: 1px solid #2f3b43;
-            flex-shrink: 0;
-            max-height: 42%;
-            overflow-y: auto;
-        }
+.section-label {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0 0 8px 5px;
+    opacity: .85;
+}
 
-        .btn-choice {
-            background: #202c33;
-            color: var(--text-main);
-            border: 1px solid #3d4a54;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            text-align: left;
-            transition: background 0.2s, border-color 0.2s;
-        }
+.ios-notification {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    border-radius: 19px;
+    background: rgba(255,255,255,.2);
+    border: 1px solid #ffffff25;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    text-align: left;
+    width: 100%;
+}
 
-        .btn-choice:hover,
-        .btn-choice:focus-visible {
-            background: #2a3942;
-            border-color: var(--accent);
-            outline: none;
-        }
+.notif-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: #25D366;
+    font-size: 22px;
+    flex-shrink: 0;
+}
 
-        .btn-choice:disabled {
-            opacity: 0.5;
-            cursor: wait;
-        }
+.notif-content {
+    min-width: 0;
+}
 
-        .btn-reset {
-            background: #8c1d1d;
-            color: white;
-            border: none;
-            padding: 7px 10px;
-            font-size: 0.75rem;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-left: auto;
-            flex-shrink: 0;
-        }
+.notif-content h4 {
+    margin: 0 0 4px;
+    font-size: 13px;
+}
 
-        .btn-reset:hover {
-            background: #b32626;
-        }
+.notif-content p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    opacity: .9;
+}
 
-        .loading {
-            color: #8696a0;
-            font-size: 0.85rem;
-            text-align: center;
-            padding: 8px;
-        }
+.swipe-hint {
+    text-align: center;
+    padding: 0 10px 42px;
+    font-size: 12px;
+    opacity: .85;
+    cursor: pointer;
+}
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* PASSCODE */
 
-        @media (max-width: 480px) {
-            body {
-                padding: 0;
-                background: var(--chat-bg);
-            }
+#passcode-screen {
+    align-items: center;
+    background: #1d2836b8;
+    backdrop-filter: blur(35px);
+    -webkit-backdrop-filter: blur(35px);
+}
 
-            .phone-container {
-                max-width: none;
-                width: 100%;
-                height: 100vh;
-                height: 100dvh;
-                min-height: 0;
-                border: none;
-                border-radius: 0;
-                box-shadow: none;
-            }
+.passcode-heading {
+    margin-top: 100px;
+    text-align: center;
+}
 
-            .chat-body {
-                padding: 16px;
-            }
+.passcode-heading h2 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0;
+}
 
-            .choices-container {
-                padding: 12px;
-                max-height: 40%;
-            }
-        }
+#passcode-error {
+    height: 18px;
+    font-size: 12px;
+    color: #ffaaaa;
+    margin: 8px 0 0;
+}
 
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
-            }
-        }
-    </style>
+.dots-container {
+    display: flex;
+    gap: 19px;
+    margin: 15px 0 28px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid white;
+    border-radius: 50%;
+}
+
+.dot.filled {
+    background: white;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 72px);
+    gap: 13px 20px;
+    justify-content: center;
+}
+
+.key {
+    width: 72px;
+    height: 72px;
+    border: 0;
+    border-radius: 50%;
+    background: #ffffff22;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 27px;
+}
+
+.key:active {
+    background: #ffffff55;
+}
+
+.key span {
+    font-size: 8px;
+    letter-spacing: 1px;
+    margin-top: 2px;
+    opacity: .7;
+}
+
+.key-delete {
+    background: transparent;
+    font-size: 12px;
+}
+
+/* HOME */
+
+#home-screen {
+    padding: 65px 20px 45px;
+    background:
+        radial-gradient(ellipse at 20% 15%, #aab9c9 0%, transparent 38%),
+        radial-gradient(ellipse at 85% 65%, #8b9eaf 0%, transparent 38%),
+        linear-gradient(145deg, #526477, #202d3b 60%, #111b27);
+}
+
+.home-greeting {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 0 0 4px 3px;
+    opacity: .8;
+}
+
+.home-title {
+    font-size: 27px;
+    font-weight: 600;
+    margin: 0 0 22px 3px;
+}
+
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 23px 8px;
+}
+
+.app-icon-wrapper {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    border: 0;
+    background: transparent;
+}
+
+.app-icon {
+    width: clamp(48px, 13vw, 58px);
+    height: clamp(48px, 13vw, 58px);
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    font-size: 29px;
+    box-shadow: 0 5px 12px #0003;
+}
+
+.app-name {
+    font-size: 10px;
+    text-shadow: 0 1px 4px #000;
+    text-align: center;
+}
+
+.icon-wa { background: #25D366; }
+.icon-ig { background: linear-gradient(135deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5); }
+.icon-photos { background: #fff; }
+.icon-notes { background: #fff7d6; }
+.icon-settings { background: #858b95; }
+.icon-mail { background: #4c9df5; }
+.icon-camera { background: #d9dce0; }
+.icon-phone { background: #32c65a; }
+
+.dock {
+    margin-top: auto;
+    padding: 13px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    background: #ffffff2b;
+    border: 1px solid #ffffff20;
+    border-radius: 23px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+/* APP WINDOWS */
+
+#app-window {
+    background: #f6f6f6;
+    color: #202124;
+    z-index: 50;
+}
+
+.app-header {
+    min-height: 76px;
+    padding: 39px 14px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #202c33;
+    color: white;
+    flex-shrink: 0;
+}
+
+.btn-back {
+    background: transparent;
+    border: 0;
+    color: #55d8a5;
+    font-size: 16px;
+    padding: 5px 0;
+}
+
+.app-header-title {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.app-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+#app-window.whatsapp-mode {
+    background: #0b141a;
+    color: #e9edef;
+}
+
+.whatsapp-mode .app-header {
+    background: #202c33;
+}
+
+.chat-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    padding: 15px;
+    background-color: #0b141a;
+    background-image: radial-gradient(#ffffff08 1px, transparent 1px);
+    background-size: 15px 15px;
+}
+
+.bubble {
+    max-width: 88%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.incoming {
+    background: #202c33;
+    align-self: flex-start;
+    border-top-left-radius: 3px;
+}
+
+.outgoing {
+    background: #005c4b;
+    align-self: flex-end;
+    border-top-right-radius: 3px;
+}
+
+.chat-input-area {
+    background: #111b21;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    flex-shrink: 0;
+}
+
+.wa-btn {
+    background: #202c33;
+    color: #e9edef;
+    border: 1px solid #3d4a54;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: left;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.wa-btn:active {
+    background: #344650;
+}
+
+.info-card {
+    border-radius: 17px;
+    background: white;
+    color: #252525;
+    padding: 17px;
+    margin-bottom: 13px;
+    box-shadow: 0 3px 12px #0001;
+}
+
+.info-card h3 {
+    margin: 0 0 7px;
+    font-size: 16px;
+}
+
+.info-card p {
+    font-size: 13px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.note-paper {
+    background: #fff8d8;
+    color: #403923;
+    min-height: 180px;
+    padding: 18px;
+    border-radius: 10px;
+    line-height: 1.7;
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+.photo-placeholder {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 65px;
+    background: linear-gradient(145deg, #d8dfe6, #879aaf);
+    margin-bottom: 12px;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 14px;
+    color: #242424;
+    border-radius: 12px;
+    margin-bottom: 9px;
+    font-size: 13px;
+}
+
+.home-bar {
+    position: absolute;
+    z-index: 120;
+    bottom: 7px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 115px;
+    height: 5px;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+}
+
+@media (max-width: 480px) {
+    body {
+        background: #111b21;
+    }
+
+    .phone-container {
+        max-width: none;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        min-height: 0;
+        border: 0;
+        border-radius: 0;
+    }
+}
+
+@media (max-height: 650px) {
+    .lock-time { margin-top: 58px; }
+    .lock-time h1 { font-size: 62px; }
+    .passcode-heading { margin-top: 65px; }
+    .keypad { gap: 8px 18px; }
+    .key { width: 59px; height: 59px; }
+    .app-grid { gap: 13px 8px; }
+}
+</style>
 </head>
 
 <body>
 <div class="phone-container">
 
-    <div class="chat-header">
-        <div class="avatar" id="chat-avatar">❓</div>
-
-        <div class="user-info">
-            <div class="name" id="chat-name">Nomor Tidak Dikenal</div>
-            <div class="status" id="chat-status">online</div>
-        </div>
-
-        <button class="btn-reset" id="reset-button" type="button">
-            Reset Game
-        </button>
+    <div class="status-bar">
+        <span id="status-time">16:53</span>
+        <span>● ▮▮▮  Wi-Fi ▰</span>
     </div>
 
-    <div
-        class="chat-body"
-        id="chat-body"
-        role="log"
-        aria-live="polite"
-        aria-label="Percakapan"
-    ></div>
+    <div class="dynamic-island"></div>
 
-    <div class="choices-container" id="choices-container"></div>
+    <!-- LOCK SCREEN -->
+    <section id="lock-screen" class="screen active-screen">
+        <div class="lock-time">
+            <div class="lock-date" id="lock-date">Thursday, October 22</div>
+            <h1 id="lock-clock">16:53</h1>
+            <div class="lock-subtitle">🌐 English</div>
+        </div>
+
+        <div class="notification-center">
+            <p class="section-label">NOTIFICATION CENTER</p>
+            <button class="ios-notification" onclick="goToScreen('passcode-screen')">
+                <div class="notif-icon">💬</div>
+                <div class="notif-content">
+                    <h4>Bibi · Messages</h4>
+                    <p>Dhika, bibi harap, kamu dan kedua sepupumu itu jaga sikap.</p>
+                </div>
+            </button>
+        </div>
+
+        <div class="swipe-hint" onclick="goToScreen('passcode-screen')">
+            Tap to unlock
+        </div>
+    </section>
+
+    <!-- PASSCODE SCREEN -->
+    <section id="passcode-screen" class="screen">
+        <div class="passcode-heading">
+            <h2>Enter Passcode</h2>
+            <p id="passcode-error"></p>
+        </div>
+
+        <div class="dots-container">
+            <div class="dot" id="dot0"></div>
+            <div class="dot" id="dot1"></div>
+            <div class="dot" id="dot2"></div>
+            <div class="dot" id="dot3"></div>
+        </div>
+
+        <div class="keypad">
+            <button class="key" onclick="pressKey('1')">1</button>
+            <button class="key" onclick="pressKey('2')">2<span>ABC</span></button>
+            <button class="key" onclick="pressKey('3')">3<span>DEF</span></button>
+            <button class="key" onclick="pressKey('4')">4<span>GHI</span></button>
+            <button class="key" onclick="pressKey('5')">5<span>JKL</span></button>
+            <button class="key" onclick="pressKey('6')">6<span>MNO</span></button>
+            <button class="key" onclick="pressKey('7')">7<span>PQRS</span></button>
+            <button class="key" onclick="pressKey('8')">8<span>TUV</span></button>
+            <button class="key" onclick="pressKey('9')">9<span>WXYZ</span></button>
+            <div></div>
+            <button class="key" onclick="pressKey('0')">0</button>
+            <button class="key key-delete" onclick="clearPasscode()">Delete</button>
+        </div>
+    </section>
+
+    <!-- HOME SCREEN -->
+    <section id="home-screen" class="screen">
+        <p class="home-greeting">Thursday afternoon</p>
+        <h2 class="home-title">Dhika's iPhone</h2>
+
+        <div class="app-grid">
+            <button class="app-icon-wrapper" onclick="openApp('whatsapp')">
+                <span class="app-icon icon-wa">💬</span>
+                <span class="app-name">WhatsApp</span>
+            </button>
+
+            <button class="app-icon-wrapper" onclick="openApp('instagram')">
+                <span class="app-icon icon-ig">📸</span>
+                <span class="app-name">Instagram</span>
+            </button>
+
+            <button class="app-icon-wrapper" onclick="openApp('photos')">
+                <span class="app-icon icon-photos">🌈</span>
+                <span class="app-name">Photos</span>
+            </button>
+
+            <button class="app-icon-wrapper" onclick="openApp('notes')">
+                <span class="app-icon icon-notes">📝</span>
+                <span class="app-name">Notes</span>
+            </button>
+
+            <button class="app-icon-wrapper" onclick="openApp('settings')">
+                <span class="app-icon icon-settings">⚙️</span>
+                <span class="app-name">Settings</span>
+            </button>
+
+            <button class="app-icon-wrapper" onclick="openApp('mail')">
+                <span class="app-icon icon-mail">✉️</span>
+                <span class="app-name">Mail</span>
+            </button>
+
+            <button class="app-icon-wrapper" onclick="openApp('camera')">
+                <span class="app-icon icon-camera">📷</span>
+                <span class="app-name">Camera</span>
+            </button>
+
+            <button class="app-icon-wrapper" onclick="openApp('phone')">
+                <span class="app-icon icon-phone">☎️</span>
+                <span class="app-name">Phone</span>
+            </button>
+        </div>
+
+        <div class="dock">
+            <button class="app-icon-wrapper" onclick="openApp('phone')">
+                <span class="app-icon icon-phone">☎️</span>
+            </button>
+            <button class="app-icon-wrapper" onclick="openApp('whatsapp')">
+                <span class="app-icon icon-wa">💬</span>
+            </button>
+            <button class="app-icon-wrapper" onclick="openApp('photos')">
+                <span class="app-icon icon-photos">🌈</span>
+            </button>
+            <button class="app-icon-wrapper" onclick="openApp('mail')">
+                <span class="app-icon icon-mail">✉️</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- APP WINDOW -->
+    <section id="app-window" class="screen">
+        <header class="app-header">
+            <button class="btn-back" onclick="goToScreen('home-screen')">‹ Back</button>
+            <div class="app-header-title" id="app-title">App</div>
+        </header>
+
+        <div id="app-content" class="app-content"></div>
+
+        <div id="wa-chat-body" class="chat-body" style="display:none"></div>
+        <div id="wa-choices-area" class="chat-input-area" style="display:none"></div>
+    </section>
+
+    <div class="home-bar" onclick="handleHomeButton()"></div>
 </div>
 
 <script>
 "use strict";
 
-const storyData = {
+const CORRECT_PASSCODE = "2210";
+let currentInput = "";
+let chatRun = 0;
+
+const auStory = {
     start: {
-        name: "0812-334X-XXXX",
-        avatar: "❓",
         messages: [
-            { type: "system", text: "23:42" },
-            { type: "incoming", text: "P" },
             {
                 type: "incoming",
-                text: "Tolongin gue... Siapapun yang megang nomor ini."
+                text: "Dhika, bibi harap, kamu dan kedua sepupumu itu jaga sikap."
             },
             {
                 type: "incoming",
-                text: "Gue kekunci di Lab Kimia lama. Ada orang di luar bawa pisau, dia nyariin gue."
+                text: "Jangan bikin malu keluarga besar di acara nanti malam. Paham?"
             }
         ],
         choices: [
             {
-                text: "💬 Balas: 'Ini siapa? Jangan nge-prank malam-malam!'",
-                nextNode: "balasPrank"
+                text: "💬 'Iya Bi, Dhika paham kok. Aman.'",
+                nextNode: "ruteAman"
             },
             {
-                text: "🚫 Abaikan & langsung blokir nomornya.",
-                nextNode: "endingBlokir"
+                text: "💬 'Emang sepupu Dhika bikin ulah apa lagi, Bi?'",
+                nextNode: "ruteMisteri"
             }
         ]
     },
 
-    balasPrank: {
+    ruteAman: {
         messages: [
             {
                 type: "outgoing",
-                text: "Ini siapa? Jangan nge-prank malam-malam!"
+                text: "Iya Bi, Dhika paham kok. Aman."
             },
             {
                 type: "incoming",
-                text: "Gue Karin, anak OSIS! Sumpah demi Tuhan ini bukan prank."
-            },
-            {
-                type: "incoming",
-                text: "Lampu sekolah dimatiin semua. Langkah kakinya makin deket ke pintu Lab..."
+                text: "Bagus. Oiya, tolong cek lemari kamar tamu, pastikan dikunci. Ada berkas penting di sana."
             }
         ],
         choices: [
             {
-                text: "📞 'Gue telepon Pak Doni (Satpam) sekarang!'",
-                nextNode: "teleponSatpam"
-            },
-            {
-                text: "🤫 'Sembunyi di lemari belakang, jangan bikin suara! Gue jalan ke sana.'",
-                nextNode: "nekatKeSekolah"
+                text: "🔄 Ulangi Chat",
+                nextNode: "start"
             }
         ]
     },
 
-    teleponSatpam: {
+    ruteMisteri: {
         messages: [
             {
                 type: "outgoing",
-                text: "Gue telepon Pak Doni (Satpam) sekarang!"
-            },
-            {
-                type: "system",
-                text: "Anda mencoba menghubungi Pak Doni..."
-            },
-            {
-                type: "system",
-                text: "Nomor yang Anda tuju sedang tidak aktif."
+                text: "Emang sepupu Dhika bikin ulah apa lagi, Bi?"
             },
             {
                 type: "incoming",
-                text: "GAK BISA! Pak Doni udah pingsan di pos tadi gue liat 😭"
+                text: "Mereka berdua ketahuan sembunyiin kunci gudang belakang."
             },
             {
                 type: "incoming",
-                text: "PINTUNYA MULAI DIDOBRAK! DIA UDAH DEKET!"
+                text: "Bibi curiga mereka ngerencanain sesuatu yang aneh..."
             }
         ],
         choices: [
             {
-                text: "🚨 Hubungi polisi dan beri tahu lokasi Karin.",
-                nextNode: "endingPolisi"
-            },
-            {
-                text: "🏃 Langsung lari ke sekolah bawa balok kayu.",
-                nextNode: "endingHoror"
+                text: "🔄 Ulangi Chat",
+                nextNode: "start"
             }
-        ]
-    },
-
-    nekatKeSekolah: {
-        messages: [
-            {
-                type: "outgoing",
-                text: "Sembunyi di lemari belakang, jangan bikin suara! Gue jalan ke sana."
-            },
-            {
-                type: "incoming",
-                text: "Oke... gue masuk lemari. Buruan plis, napas gue sesak..."
-            },
-            {
-                type: "system",
-                text: "Karin terakhir terlihat 3 menit yang lalu."
-            },
-            {
-                type: "system",
-                text: "Anda sampai di Lab Kimia. Pintu terbuka lebar, pecahan kaca berserakan. Lemari di belakang terkunci dari luar."
-            }
-        ],
-        choices: [
-            {
-                text: "🔓 Buka paksa lemarinya.",
-                nextNode: "endingSelamat"
-            },
-            {
-                text: "🔍 Cari petunjuk di sekitar meja guru.",
-                nextNode: "endingJebakan"
-            }
-        ]
-    },
-
-    endingBlokir: {
-        messages: [
-            {
-                type: "system",
-                text: "Anda memblokir kontak ini."
-            },
-            {
-                type: "system",
-                text: "❌ ENDING: IGNORED IGNORANCE"
-            },
-            {
-                type: "system",
-                text: "Keesokan paginya, sekolah gempar. Karin ditemukan menghilang tanpa jejak. Anda dihantui rasa bersalah."
-            }
-        ],
-        choices: [
-            { text: "🔄 Ulangi Cerita", nextNode: "start" }
-        ]
-    },
-
-    endingPolisi: {
-        messages: [
-            {
-                type: "system",
-                text: "Polisi tiba di sekolah dalam 10 menit."
-            },
-            {
-                type: "system",
-                text: "🏆 ENDING: THE TRUE SAVIOR"
-            },
-            {
-                type: "system",
-                text: "Pelaku berhasil diamankan. Karin selamat dan mendapatkan bantuan setelah mengalami kejadian traumatis. Berkat tindakanmu, ia punya kesempatan untuk pulih."
-            }
-        ],
-        choices: [
-            { text: "🔄 Ulangi Cerita", nextNode: "start" }
-        ]
-    },
-
-    endingHoror: {
-        messages: [
-            {
-                type: "system",
-                text: "Kamu sampai di koridor sekolah yang gelap gulita..."
-            },
-            {
-                type: "system",
-                text: "💀 ENDING: DOUBLE CASUALTY"
-            },
-            {
-                type: "system",
-                text: "Kamu diserang dari belakang sebelum sempat mencapai Lab Kimia. Layar HP-mu retak di lantai, menampilkan chat terakhir Karin yang belum terbaca."
-            }
-        ],
-        choices: [
-            { text: "🔄 Ulangi Cerita", nextNode: "start" }
-        ]
-    },
-
-    endingSelamat: {
-        messages: [
-            {
-                type: "system",
-                text: "Kamu mendobrak lemari! Karin memelukmu sambil menangis."
-            },
-            {
-                type: "system",
-                text: "🏅 ENDING: HEROIC RESCUE"
-            },
-            {
-                type: "system",
-                text: "Kalian berhasil keluar melalui jendela dan mencari tempat aman. Misteri pelaku malam itu masih diselidiki, tetapi kalian selamat."
-            }
-        ],
-        choices: [
-            { text: "🔄 Ulangi Cerita", nextNode: "start" }
-        ]
-    },
-
-    endingJebakan: {
-        messages: [
-            {
-                type: "system",
-                text: "Kamu memeriksa meja guru..."
-            },
-            {
-                type: "system",
-                text: "🕸️ ENDING: IT'S A TRAP"
-            },
-            {
-                type: "system",
-                text: "Di atas meja ada HP Karin yang menyala. Tiba-tiba pintu Lab menutup otomatis dan terkunci. Di dalam lemari bukan Karin, melainkan sebuah boneka perekam suara..."
-            }
-        ],
-        choices: [
-            { text: "🔄 Ulangi Cerita", nextNode: "start" }
         ]
     }
 };
 
-const chatBody = document.getElementById("chat-body");
-const choicesContainer = document.getElementById("choices-container");
-const chatName = document.getElementById("chat-name");
-const chatStatus = document.getElementById("chat-status");
-const chatAvatar = document.getElementById("chat-avatar");
-const resetButton = document.getElementById("reset-button");
-
-let timers = [];
-let currentRun = 0;
-let isRendering = false;
-
-function schedule(callback, delay, runId) {
-    const timer = setTimeout(() => {
-        if (runId === currentRun) {
-            callback();
-        }
-    }, delay);
-
-    timers.push(timer);
-}
-
-function clearTimers() {
-    timers.forEach(clearTimeout);
-    timers = [];
-}
-
-function appendBubble(text, type) {
-    const bubble = document.createElement("div");
-    bubble.classList.add("bubble", type);
-    bubble.textContent = text;
-
-    chatBody.appendChild(bubble);
-    chatBody.scrollTop = chatBody.scrollHeight;
-}
-
-function showChoices(choices, runId) {
-    if (runId !== currentRun) return;
-
-    choicesContainer.innerHTML = "";
-
-    choices.forEach(choice => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "btn-choice";
-        button.textContent = choice.text;
-
-        button.addEventListener("click", () => {
-            if (isRendering || runId !== currentRun) return;
-
-            if (!storyData[choice.nextNode]) {
-                console.error("Node cerita tidak ditemukan:", choice.nextNode);
-                return;
-            }
-
-            renderNode(choice.nextNode);
-        });
-
-        choicesContainer.appendChild(button);
+function goToScreen(screenId) {
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active-screen");
     });
 
-    isRendering = false;
-    chatBody.scrollTop = chatBody.scrollHeight;
+    const target = document.getElementById(screenId);
+    if (target) target.classList.add("active-screen");
 }
 
-function renderNode(nodeKey) {
-    const node = storyData[nodeKey];
+function handleHomeButton() {
+    const active = document.querySelector(".screen.active-screen");
 
-    if (!node) {
-        console.error("Cerita tidak ditemukan:", nodeKey);
-        return;
+    if (!active) return;
+
+    if (active.id === "passcode-screen") {
+        clearPasscode();
+        goToScreen("lock-screen");
+    } else if (active.id === "app-window") {
+        chatRun++;
+        goToScreen("home-screen");
+    } else if (active.id === "home-screen") {
+        goToScreen("lock-screen");
+    } else {
+        goToScreen("passcode-screen");
+    }
+}
+
+function pressKey(num) {
+    if (currentInput.length >= 4) return;
+
+    currentInput += num;
+    document.getElementById("dot" + (currentInput.length - 1))
+        .classList.add("filled");
+
+    if (currentInput.length === 4) {
+        setTimeout(() => {
+            if (currentInput === CORRECT_PASSCODE) {
+                document.getElementById("passcode-error").textContent = "";
+                clearPasscode();
+                goToScreen("home-screen");
+            } else {
+                document.getElementById("passcode-error").textContent =
+                    "Wrong Passcode. Try again.";
+                clearPasscode();
+            }
+        }, 250);
+    }
+}
+
+function clearPasscode() {
+    currentInput = "";
+
+    for (let i = 0; i < 4; i++) {
+        document.getElementById("dot" + i).classList.remove("filled");
+    }
+}
+
+function openApp(appName) {
+    chatRun++;
+
+    const appWindow = document.getElementById("app-window");
+    const appTitle = document.getElementById("app-title");
+    const appContent = document.getElementById("app-content");
+    const chatBody = document.getElementById("wa-chat-body");
+    const choicesArea = document.getElementById("wa-choices-area");
+
+    appContent.style.display = "block";
+    chatBody.style.display = "none";
+    choicesArea.style.display = "none";
+
+    appWindow.classList.remove("whatsapp-mode");
+
+    const apps = {
+        instagram: {
+            title: "Instagram",
+            html: `
+                <div class="info-card">
+                    <h3>📸 dhika.archive</h3>
+                    <p>close friends, random days & little memories.</p>
+                </div>
+                <div class="info-card">
+                    <div class="photo-placeholder">🌅</div>
+                    <h3>last evening</h3>
+                    <p>Some family gatherings never feel simple.</p>
+                </div>
+                <div class="info-card">
+                    <h3>💬 Close Friends Story</h3>
+                    <p>“Kenapa semua orang kayak nyembunyiin sesuatu dari gue?”</p>
+                </div>`
+        },
+
+        photos: {
+            title: "Photos",
+            html: `
+                <div class="info-card">
+                    <h3>Recents</h3>
+                    <div class="photo-placeholder">🏡</div>
+                    <p>Family House · 4:42 PM</p>
+                </div>
+                <div class="info-card">
+                    <div class="photo-placeholder">🔑</div>
+                    <h3>IMG_2210</h3>
+                    <p>Sebuah foto kunci gudang belakang yang tidak sengaja terambil.</p>
+                </div>`
+        },
+
+        notes: {
+            title: "Notes",
+            html: `
+                <div class="note-paper" contenteditable="true">
+Catatan Dhika
+
+Acara keluarga malam ini.
+
+- Bibi terus mengingatkan soal sikap.
+- Ada berkas penting di lemari kamar tamu.
+- Kenapa sepupu-sepupuku menyembunyikan kunci gudang?
+
+Aku harus cari tahu sendiri.
+                </div>
+                <p style="font-size:11px;color:#ddd;margin-top:10px">
+                Catatan simulasi. Perubahan tidak disimpan setelah halaman ditutup.
+                </p>`
+        },
+
+        settings: {
+            title: "Settings",
+            html: `
+                <div class="setting-row">👤 &nbsp; Apple Account</div>
+                <div class="setting-row">📶 &nbsp; Wi-Fi · Connected</div>
+                <div class="setting-row">🔵 &nbsp; Bluetooth · On</div>
+                <div class="setting-row">🔒 &nbsp; Face ID & Passcode</div>
+                <div class="info-card">
+                    <h3>About this iPhone</h3>
+                    <p>AU Simulator · Interactive Story</p>
+                </div>`
+        },
+
+        mail: {
+            title: "Mail",
+            html: `
+                <div class="info-card">
+                    <p style="color:#777;font-size:11px">TODAY · 3:15 PM</p>
+                    <h3>Family Gathering — Reminder</h3>
+                    <p>From: Family Committee</p>
+                    <p style="margin-top:12px">Mohon seluruh anggota keluarga hadir tepat waktu. Ada pengumuman penting malam ini.</p>
+                </div>
+                <div class="info-card">
+                    <h3>Unknown Sender</h3>
+                    <p>Subject: About the storage key</p>
+                    <p style="margin-top:8px">Dhika, jangan percaya semua yang kamu dengar malam ini.</p>
+                </div>`
+        },
+
+        camera: {
+            title: "Camera",
+            html: `
+                <div class="photo-placeholder" style="height:300px">📷</div>
+                <div class="info-card">
+                    <h3>Camera Simulator</h3>
+                    <p>Kamera ini hanya simulasi. Tidak mengakses kamera asli perangkat.</p>
+                </div>`
+        },
+
+        phone: {
+            title: "Phone",
+            html: `
+                <div class="info-card">
+                    <h3>Recents</h3>
+                    <p>📞 Bibi · 15:48</p>
+                    <p style="margin-top:12px">📞 Unknown Number · 15:51</p>
+                    <p style="margin-top:12px">📞 Sepupu · 16:02</p>
+                </div>
+                <button class="wa-btn" style="width:100%"
+                    onclick="alert('Panggilan simulasi. Tidak melakukan panggilan sungguhan.')">
+                    📞 Call Unknown Number
+                </button>`
+        }
+    };
+
+    if (appName === "whatsapp") {
+        appTitle.textContent = "Bibi";
+        appWindow.classList.add("whatsapp-mode");
+        appContent.style.display = "none";
+        chatBody.style.display = "flex";
+        choicesArea.style.display = "flex";
+
+        renderChatNode("start");
+    } else {
+        const app = apps[appName];
+
+        if (!app) return;
+
+        appTitle.textContent = app.title;
+        appContent.innerHTML = app.html;
     }
 
-    clearTimers();
-    const runId = ++currentRun;
-    isRendering = true;
+    goToScreen("app-window");
+}
+
+function renderChatNode(nodeKey) {
+    const node = auStory[nodeKey];
+
+    if (!node) return;
+
+    const runId = ++chatRun;
+    const chatBody = document.getElementById("wa-chat-body");
+    const choicesArea = document.getElementById("wa-choices-area");
 
     chatBody.innerHTML = "";
-    choicesContainer.innerHTML = "";
+    choicesArea.innerHTML = "";
 
-    chatName.textContent = node.name || "0812-334X-XXXX";
-    chatAvatar.textContent = node.avatar || "❓";
-    chatStatus.textContent = "online";
-
-    const loading = document.createElement("div");
-    loading.className = "loading";
-    loading.textContent = "Memuat percakapan...";
-    chatBody.appendChild(loading);
-
-    let index = 0;
     const messages = node.messages || [];
+    let index = 0;
 
-    function displayNextMessage() {
-        if (runId !== currentRun) return;
-
-        loading.remove();
+    function showNextMessage() {
+        if (runId !== chatRun) return;
 
         if (index >= messages.length) {
-            chatStatus.textContent = "online";
-            showChoices(node.choices || [], runId);
+            showChoices();
             return;
         }
 
         const msg = messages[index++];
+        const bubble = document.createElement("div");
 
-        if (msg.type === "incoming") {
-            chatStatus.textContent = "mengetik...";
-        } else {
-            chatStatus.textContent = "online";
-        }
+        bubble.className = "bubble " + msg.type;
+        bubble.textContent = msg.text;
 
-        appendBubble(msg.text, msg.type);
+        chatBody.appendChild(bubble);
+        chatBody.scrollTop = chatBody.scrollHeight;
 
-        schedule(() => {
-            chatStatus.textContent = "online";
-            displayNextMessage();
-        }, msg.type === "system" ? 500 : 850, runId);
+        setTimeout(showNextMessage, 350);
     }
 
-    schedule(displayNextMessage, 400, runId);
+    function showChoices() {
+        if (runId !== chatRun) return;
+
+        choicesArea.innerHTML = "";
+
+        (node.choices || []).forEach(choice => {
+            const button = document.createElement("button");
+            button.className = "wa-btn";
+            button.textContent = choice.text;
+
+            button.addEventListener("click", () => {
+                if (runId === chatRun) {
+                    renderChatNode(choice.nextNode);
+                }
+            });
+
+            choicesArea.appendChild(button);
+        });
+    }
+
+    showNextMessage();
 }
 
-function resetGame() {
-    clearTimers();
-    currentRun++;
-    isRendering = false;
-    renderNode("start");
+/* Clock and date */
+function updateClock() {
+    const now = new Date();
+
+    document.getElementById("status-time").textContent =
+        now.toLocaleTimeString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        });
+
+    document.getElementById("lock-clock").textContent =
+        now.toLocaleTimeString("id-ID", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        });
+
+    document.getElementById("lock-date").textContent =
+        now.toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric"
+        });
 }
 
-resetButton.addEventListener("click", resetGame);
-
-window.addEventListener("DOMContentLoaded", () => {
-    renderNode("start");
-});
+updateClock();
+setInterval(updateClock, 30000);
 </script>
+
 </body>
-</html>
+    </html>
