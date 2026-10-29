@@ -3,78 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#202b38">
-<title>iOS AU Simulator</title>
+<meta name="theme-color" content="#1f2c34">
+<title>📱 iOS AU Simulator</title>
 
 <style>
-:root {
-    --green: #25D366;
-    --glass: rgba(255,255,255,.17);
-    --dark: #101820;
-}
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
     margin: 0;
     min-height: 100vh;
-    min-height: 100dvh;
     display: flex;
-    align-items: center;
     justify-content: center;
-    background: #151a20;
+    align-items: center;
+    background: #1f2c34;
     color: white;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-button {
-    font: inherit;
-    color: inherit;
-    cursor: pointer;
-}
+button { font: inherit; cursor: pointer; color: inherit; }
 
 .phone-container {
     position: relative;
     width: 100%;
     max-width: 420px;
-    height: 92vh;
-    height: 92dvh;
-    min-height: 480px;
+    height: 94vh;
+    height: 94dvh;
+    min-height: 500px;
     overflow: hidden;
+    border: 7px solid #2d2d2d;
+    border-radius: 38px;
+    box-shadow: 0 15px 35px #0009;
     background:
-        radial-gradient(ellipse at 20% 15%, #aab9c9 0%, transparent 38%),
-        radial-gradient(ellipse at 85% 65%, #8b9eaf 0%, transparent 38%),
-        linear-gradient(145deg, #526477, #202d3b 60%, #111b27);
-    border: 5px solid #34373d;
-    border-radius: 42px;
-    box-shadow: 0 20px 60px #0009;
+        radial-gradient(ellipse at 15% 15%, #8ca9bd, transparent 40%),
+        radial-gradient(ellipse at 85% 70%, #526f89, transparent 45%),
+        linear-gradient(145deg, #344b62, #101b2b);
 }
 
 .dynamic-island {
     position: absolute;
-    z-index: 100;
     top: 12px;
     left: 50%;
     transform: translateX(-50%);
     width: 105px;
-    height: 29px;
-    border-radius: 30px;
-    background: #050505;
+    height: 28px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 100;
 }
 
 .status-bar {
     position: absolute;
     z-index: 99;
     top: 12px;
-    left: 24px;
-    right: 24px;
+    left: 20px;
+    right: 20px;
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     pointer-events: none;
 }
@@ -87,34 +72,23 @@ button {
     overflow: hidden;
 }
 
-.screen.active-screen {
-    display: flex;
-}
+.active-screen { display: flex; }
 
+/* LOCK SCREEN */
 .lock-time {
-    margin-top: 75px;
     text-align: center;
-    text-shadow: 0 2px 12px #0003;
-}
-
-.lock-date {
-    font-size: 16px;
-    margin-bottom: 3px;
+    margin-top: 65px;
+    text-shadow: 0 2px 8px #0003;
 }
 
 .lock-time h1 {
-    font-size: clamp(65px, 18vw, 88px);
-    font-weight: 250;
-    line-height: 1.1;
-    margin: 0;
+    font-size: clamp(62px, 17vw, 78px);
+    font-weight: 300;
     letter-spacing: -3px;
+    margin: 0;
 }
 
-.lock-subtitle {
-    font-size: 13px;
-    opacity: .85;
-    margin-top: 8px;
-}
+.lock-time p { margin: 5px 0; }
 
 .notification-center {
     margin-top: auto;
@@ -122,267 +96,215 @@ button {
 }
 
 .section-label {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    margin: 0 0 8px 5px;
-    opacity: .85;
+    margin: 0 0 8px 4px;
 }
 
 .ios-notification {
     display: flex;
-    gap: 12px;
     align-items: center;
-    padding: 14px;
-    border-radius: 19px;
-    background: rgba(255,255,255,.2);
-    border: 1px solid #ffffff25;
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    text-align: left;
+    gap: 12px;
     width: 100%;
+    padding: 14px;
+    text-align: left;
+    border: 1px solid #ffffff20;
+    border-radius: 20px;
+    background: #ffffff30;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    animation: pulse 2.5s infinite;
 }
 
 .notif-icon {
     width: 40px;
     height: 40px;
-    border-radius: 12px;
+    flex-shrink: 0;
     display: grid;
     place-items: center;
+    border-radius: 10px;
     background: #25D366;
     font-size: 22px;
-    flex-shrink: 0;
 }
 
-.notif-content {
-    min-width: 0;
-}
-
-.notif-content h4 {
-    margin: 0 0 4px;
-    font-size: 13px;
-}
-
-.notif-content p {
-    margin: 0;
-    font-size: 12px;
-    line-height: 1.45;
-    opacity: .9;
-}
+.notif-content h4 { margin: 0 0 4px; font-size: 13px; }
+.notif-content p { margin: 0; font-size: 12px; line-height: 1.4; }
 
 .swipe-hint {
     text-align: center;
-    padding: 0 10px 42px;
+    padding: 15px 10px 40px;
     font-size: 12px;
-    opacity: .85;
     cursor: pointer;
 }
 
 /* PASSCODE */
-
 #passcode-screen {
     align-items: center;
-    background: #1d2836b8;
-    backdrop-filter: blur(35px);
-    -webkit-backdrop-filter: blur(35px);
+    justify-content: center;
+    background: #10182099;
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
 }
 
 .passcode-heading {
-    margin-top: 100px;
+    margin: 30px 0 15px;
     text-align: center;
 }
 
-.passcode-heading h2 {
-    font-size: 22px;
-    font-weight: 500;
-    margin: 0;
-}
+.passcode-heading h2 { font-size: 21px; font-weight: 500; margin: 0; }
 
 #passcode-error {
-    height: 18px;
+    color: #ffb0b0;
     font-size: 12px;
-    color: #ffaaaa;
-    margin: 8px 0 0;
+    height: 17px;
+    margin: 7px 0 0;
 }
 
-.dots-container {
-    display: flex;
-    gap: 19px;
-    margin: 15px 0 28px;
-}
-
-.dot {
-    width: 12px;
-    height: 12px;
-    border: 1.5px solid white;
-    border-radius: 50%;
-}
-
-.dot.filled {
-    background: white;
-}
+.dots-container { display: flex; gap: 17px; margin-bottom: 27px; }
+.dot { width: 12px; height: 12px; border: 1.5px solid white; border-radius: 50%; }
+.dot.filled { background: white; }
 
 .keypad {
     display: grid;
-    grid-template-columns: repeat(3, 72px);
-    gap: 13px 20px;
+    grid-template-columns: repeat(3, 68px);
+    gap: 12px 22px;
     justify-content: center;
 }
 
 .key {
-    width: 72px;
-    height: 72px;
-    border: 0;
-    border-radius: 50%;
-    background: #ffffff22;
+    width: 68px;
+    height: 68px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 27px;
+    border: none;
+    border-radius: 50%;
+    background: #ffffff25;
+    font-size: 26px;
 }
 
-.key:active {
-    background: #ffffff55;
+.key:active { background: #ffffff55; }
+.key span { font-size: 8px; letter-spacing: 1px; }
+.key-delete { background: transparent; font-size: 12px; }
+
+/* HOME SCREEN */
+#home-screen { padding: 58px 15px 32px; }
+
+.widget-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 23px;
 }
 
-.key span {
-    font-size: 8px;
-    letter-spacing: 1px;
-    margin-top: 2px;
-    opacity: .7;
+.ios-widget {
+    height: 120px;
+    padding: 13px;
+    border-radius: 19px;
+    box-shadow: 0 4px 12px #0003;
 }
 
-.key-delete {
-    background: transparent;
-    font-size: 12px;
-}
-
-/* HOME */
-
-#home-screen {
-    padding: 65px 20px 45px;
-    background:
-        radial-gradient(ellipse at 20% 15%, #aab9c9 0%, transparent 38%),
-        radial-gradient(ellipse at 85% 65%, #8b9eaf 0%, transparent 38%),
-        linear-gradient(145deg, #526477, #202d3b 60%, #111b27);
-}
-
-.home-greeting {
-    font-size: 12px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin: 0 0 4px 3px;
-    opacity: .8;
-}
-
-.home-title {
-    font-size: 27px;
-    font-weight: 600;
-    margin: 0 0 22px 3px;
-}
+.widget-date { background: #fff; color: #222; }
+.widget-date .day { color: #ff3b30; font-size: 12px; font-weight: 600; }
+.widget-date .date { font-size: 49px; font-weight: 300; line-height: 1.1; }
+.widget-weather { background: #344c62; }
+.widget-weather .title { font-size: 12px; }
+.widget-weather .temp { font-size: 27px; margin: 6px 0; }
+.widget-weather .desc { font-size: 10px; color: #ddd; }
 
 .app-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 23px 8px;
+    gap: 20px 8px;
 }
 
 .app-icon-wrapper {
-    min-width: 0;
     display: flex;
+    min-width: 0;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    padding: 0;
     border: 0;
     background: transparent;
 }
 
 .app-icon {
-    width: clamp(48px, 13vw, 58px);
-    height: clamp(48px, 13vw, 58px);
-    border-radius: 15px;
+    width: clamp(45px, 13vw, 56px);
+    height: clamp(45px, 13vw, 56px);
     display: grid;
     place-items: center;
-    font-size: 29px;
-    box-shadow: 0 5px 12px #0003;
+    border-radius: 14px;
+    margin-bottom: 5px;
+    box-shadow: 0 4px 9px #0004;
+    font-size: 27px;
 }
 
 .app-name {
     font-size: 10px;
-    text-shadow: 0 1px 4px #000;
     text-align: center;
+    text-shadow: 1px 1px 4px #000;
 }
 
+.icon-photos { background: white; }
+.icon-mail { background: #5ac8fa; }
+.icon-weather { background: #54c7fc; }
+.icon-calendar { background: white; color: #ff3b30; }
+.icon-notes { background: #ffcc00; }
+.icon-maps { background: #e8f4e7; }
+.icon-x { background: black; }
+.icon-settings { background: #8e8e93; }
+.icon-camera { background: #e5e5ea; color: #333; }
+.icon-clock { background: black; }
+.icon-journal { background: #e5f3ff; color: #007aff; }
+.icon-instagram { background: linear-gradient(45deg,#f09433,#dc2743,#bc1888); }
+.icon-phone { background: #4cd964; }
+.icon-safari { background: white; }
 .icon-wa { background: #25D366; }
-.icon-ig { background: linear-gradient(135deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5); }
-.icon-photos { background: #fff; }
-.icon-notes { background: #fff7d6; }
-.icon-settings { background: #858b95; }
-.icon-mail { background: #4c9df5; }
-.icon-camera { background: #d9dce0; }
-.icon-phone { background: #32c65a; }
+.icon-music { background: linear-gradient(#ff2d55,#ff3b30); }
 
-.dock {
-    margin-top: auto;
-    padding: 13px;
+.ios-dock {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
-    background: #ffffff2b;
-    border: 1px solid #ffffff20;
-    border-radius: 23px;
+    padding: 10px;
+    margin-top: auto;
+    background: #ffffff35;
+    border-radius: 22px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
 }
 
-/* APP WINDOWS */
-
-#app-window {
-    background: #f6f6f6;
-    color: #202124;
-    z-index: 50;
-}
+/* APP WINDOW */
+#app-window { z-index: 50; background: #0b141a; }
 
 .app-header {
-    min-height: 76px;
-    padding: 39px 14px 12px;
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #202c33;
-    color: white;
     flex-shrink: 0;
+    padding: 39px 14px 12px;
+    background: #202c33;
+    border-bottom: 1px solid #34414a;
 }
 
 .btn-back {
-    background: transparent;
     border: 0;
-    color: #55d8a5;
-    font-size: 16px;
-    padding: 5px 0;
+    background: transparent;
+    color: #00a884;
+    font-size: 14px;
 }
 
-.app-header-title {
-    flex: 1;
-    font-size: 15px;
-    font-weight: 600;
-}
+.app-header-title { flex: 1; font-size: 15px; font-weight: 600; }
 
-.app-content {
+#app-content {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 16px;
+    padding: 15px;
 }
 
-#app-window.whatsapp-mode {
-    background: #0b141a;
-    color: #e9edef;
-}
-
-.whatsapp-mode .app-header {
-    background: #202c33;
-}
+#app-content.light-mode { background: #f4f4f4; color: #222; }
 
 .chat-body {
     flex: 1;
@@ -392,14 +314,12 @@ button {
     flex-direction: column;
     gap: 11px;
     padding: 15px;
-    background-color: #0b141a;
-    background-image: radial-gradient(#ffffff08 1px, transparent 1px);
-    background-size: 15px 15px;
+    background: #0b141a;
 }
 
 .bubble {
-    max-width: 88%;
-    padding: 10px 12px;
+    max-width: 85%;
+    padding: 9px 12px;
     border-radius: 12px;
     font-size: 13px;
     line-height: 1.5;
@@ -407,92 +327,74 @@ button {
     white-space: pre-wrap;
 }
 
-.incoming {
-    background: #202c33;
-    align-self: flex-start;
-    border-top-left-radius: 3px;
-}
-
-.outgoing {
-    background: #005c4b;
-    align-self: flex-end;
-    border-top-right-radius: 3px;
-}
+.incoming { align-self: flex-start; background: #202c33; border-top-left-radius: 2px; }
+.outgoing { align-self: flex-end; background: #005c4b; border-top-right-radius: 2px; }
+.system { align-self: center; background: #182229; color: #a6b2ba; font-size: 11px; text-align: center; }
 
 .chat-input-area {
-    background: #111b21;
-    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 8px;
     flex-shrink: 0;
+    max-height: 38%;
+    overflow-y: auto;
+    padding: 12px;
+    margin-bottom: 20px;
+    background: #111b21;
+    border-top: 1px solid #2f3b43;
 }
 
 .wa-btn {
-    background: #202c33;
-    color: #e9edef;
-    border: 1px solid #3d4a54;
-    padding: 12px;
-    border-radius: 10px;
+    padding: 11px;
     text-align: left;
+    line-height: 1.4;
     font-size: 12px;
-    line-height: 1.45;
+    color: #e9edef;
+    background: #202c33;
+    border: 1px solid #3d4a54;
+    border-radius: 9px;
 }
 
-.wa-btn:active {
-    background: #344650;
-}
+.wa-btn:active { background: #354650; }
 
 .info-card {
-    border-radius: 17px;
-    background: white;
-    color: #252525;
-    padding: 17px;
-    margin-bottom: 13px;
-    box-shadow: 0 3px 12px #0001;
+    padding: 15px;
+    margin-bottom: 12px;
+    color: #222;
+    background: #fff;
+    border-radius: 15px;
 }
 
-.info-card h3 {
-    margin: 0 0 7px;
-    font-size: 16px;
-}
-
-.info-card p {
-    font-size: 13px;
-    line-height: 1.55;
-    margin: 0;
-}
+.info-card h3 { margin: 0 0 8px; font-size: 15px; }
+.info-card p { font-size: 13px; line-height: 1.5; margin: 5px 0; }
 
 .note-paper {
-    background: #fff8d8;
-    color: #403923;
     min-height: 180px;
-    padding: 18px;
+    padding: 16px;
+    color: #443d2d;
+    background: #fff5cc;
     border-radius: 10px;
-    line-height: 1.7;
     font-size: 14px;
+    line-height: 1.7;
     white-space: pre-wrap;
 }
 
 .photo-placeholder {
-    aspect-ratio: 1;
-    border-radius: 14px;
     display: grid;
     place-items: center;
-    font-size: 65px;
-    background: linear-gradient(145deg, #d8dfe6, #879aaf);
-    margin-bottom: 12px;
+    aspect-ratio: 1;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    background: linear-gradient(135deg,#d8e1ea,#8ba0b3);
+    font-size: 55px;
 }
 
 .setting-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    padding: 13px;
+    margin-bottom: 8px;
+    color: #222;
     background: white;
-    padding: 14px;
-    color: #242424;
-    border-radius: 12px;
-    margin-bottom: 9px;
+    border-radius: 10px;
     font-size: 13px;
 }
 
@@ -509,14 +411,15 @@ button {
     cursor: pointer;
 }
 
-@media (max-width: 480px) {
-    body {
-        background: #111b21;
-    }
+@keyframes pulse {
+    50% { transform: scale(1.015); }
+}
 
+@media (max-width: 480px) {
+    body { background: #101820; }
     .phone-container {
-        max-width: none;
         width: 100%;
+        max-width: none;
         height: 100vh;
         height: 100dvh;
         min-height: 0;
@@ -525,13 +428,14 @@ button {
     }
 }
 
-@media (max-height: 650px) {
-    .lock-time { margin-top: 58px; }
-    .lock-time h1 { font-size: 62px; }
-    .passcode-heading { margin-top: 65px; }
+@media (max-height: 680px) {
+    .lock-time { margin-top: 55px; }
+    .lock-time h1 { font-size: 60px; }
+    .ios-widget { height: 95px; }
+    .widget-date .date { font-size: 38px; }
+    .app-grid { gap: 12px 8px; }
     .keypad { gap: 8px 18px; }
-    .key { width: 59px; height: 59px; }
-    .app-grid { gap: 13px 8px; }
+    .key { width: 58px; height: 58px; }
 }
 </style>
 </head>
@@ -549,9 +453,9 @@ button {
     <!-- LOCK SCREEN -->
     <section id="lock-screen" class="screen active-screen">
         <div class="lock-time">
-            <div class="lock-date" id="lock-date">Thursday, October 22</div>
+            <p id="lock-date">Thursday, October 22</p>
             <h1 id="lock-clock">16:53</h1>
-            <div class="lock-subtitle">🌐 English</div>
+            <p style="font-size:12px">🌐 English</p>
         </div>
 
         <div class="notification-center">
@@ -559,18 +463,18 @@ button {
             <button class="ios-notification" onclick="goToScreen('passcode-screen')">
                 <div class="notif-icon">💬</div>
                 <div class="notif-content">
-                    <h4>Bibi · Messages</h4>
-                    <p>Dhika, bibi harap, kamu dan kedua sepupumu itu jaga sikap.</p>
+                    <h4>Nomor Tidak Dikenal · Messages</h4>
+                    <p>P... Tolongin gue. Gue kekunci di gudang sekolah.</p>
                 </div>
             </button>
         </div>
 
         <div class="swipe-hint" onclick="goToScreen('passcode-screen')">
-            Tap to unlock
+            Swipe up or tap to open
         </div>
     </section>
 
-    <!-- PASSCODE SCREEN -->
+    <!-- PASSCODE -->
     <section id="passcode-screen" class="screen">
         <div class="passcode-heading">
             <h2>Enter Passcode</h2>
@@ -600,66 +504,40 @@ button {
         </div>
     </section>
 
-    <!-- HOME SCREEN -->
+    <!-- HOME -->
     <section id="home-screen" class="screen">
-        <p class="home-greeting">Thursday afternoon</p>
-        <h2 class="home-title">Dhika's iPhone</h2>
-
-        <div class="app-grid">
-            <button class="app-icon-wrapper" onclick="openApp('whatsapp')">
-                <span class="app-icon icon-wa">💬</span>
-                <span class="app-name">WhatsApp</span>
-            </button>
-
-            <button class="app-icon-wrapper" onclick="openApp('instagram')">
-                <span class="app-icon icon-ig">📸</span>
-                <span class="app-name">Instagram</span>
-            </button>
-
-            <button class="app-icon-wrapper" onclick="openApp('photos')">
-                <span class="app-icon icon-photos">🌈</span>
-                <span class="app-name">Photos</span>
-            </button>
-
-            <button class="app-icon-wrapper" onclick="openApp('notes')">
-                <span class="app-icon icon-notes">📝</span>
-                <span class="app-name">Notes</span>
-            </button>
-
-            <button class="app-icon-wrapper" onclick="openApp('settings')">
-                <span class="app-icon icon-settings">⚙️</span>
-                <span class="app-name">Settings</span>
-            </button>
-
-            <button class="app-icon-wrapper" onclick="openApp('mail')">
-                <span class="app-icon icon-mail">✉️</span>
-                <span class="app-name">Mail</span>
-            </button>
-
-            <button class="app-icon-wrapper" onclick="openApp('camera')">
-                <span class="app-icon icon-camera">📷</span>
-                <span class="app-name">Camera</span>
-            </button>
-
-            <button class="app-icon-wrapper" onclick="openApp('phone')">
-                <span class="app-icon icon-phone">☎️</span>
-                <span class="app-name">Phone</span>
-            </button>
+        <div class="widget-row">
+            <div class="ios-widget widget-date">
+                <div class="day" id="widget-day">THURSDAY</div>
+                <div class="date" id="widget-date">22</div>
+            </div>
+            <div class="ios-widget widget-weather">
+                <div class="title">Weather ↗</div>
+                <div class="temp">—°</div>
+                <div class="desc">No forecast added</div>
+            </div>
         </div>
 
-        <div class="dock">
-            <button class="app-icon-wrapper" onclick="openApp('phone')">
-                <span class="app-icon icon-phone">☎️</span>
-            </button>
-            <button class="app-icon-wrapper" onclick="openApp('whatsapp')">
-                <span class="app-icon icon-wa">💬</span>
-            </button>
-            <button class="app-icon-wrapper" onclick="openApp('photos')">
-                <span class="app-icon icon-photos">🌈</span>
-            </button>
-            <button class="app-icon-wrapper" onclick="openApp('mail')">
-                <span class="app-icon icon-mail">✉️</span>
-            </button>
+        <div class="app-grid">
+            <button class="app-icon-wrapper" onclick="openApp('photos')"><span class="app-icon icon-photos">🌸</span><span class="app-name">Photos</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('mail')"><span class="app-icon icon-mail">✉️</span><span class="app-name">Mail</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('weather')"><span class="app-icon icon-weather">☀️</span><span class="app-name">Weather</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('calendar')"><span class="app-icon icon-calendar">22</span><span class="app-name">Calendar</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('notes')"><span class="app-icon icon-notes">📝</span><span class="app-name">Notes</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('maps')"><span class="app-icon icon-maps">🗺️</span><span class="app-name">Maps</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('x')"><span class="app-icon icon-x">𝕏</span><span class="app-name">X</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('settings')"><span class="app-icon icon-settings">⚙️</span><span class="app-name">Settings</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('camera')"><span class="app-icon icon-camera">📷</span><span class="app-name">Camera</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('clock')"><span class="app-icon icon-clock">⏰</span><span class="app-name">Clock</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('journal')"><span class="app-icon icon-journal">📔</span><span class="app-name">Journal</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('instagram')"><span class="app-icon icon-instagram">📸</span><span class="app-name">Instagram</span></button>
+        </div>
+
+        <div class="ios-dock">
+            <button class="app-icon-wrapper" onclick="openApp('phone')"><span class="app-icon icon-phone">📞</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('safari')"><span class="app-icon icon-safari">🧭</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('whatsapp')"><span class="app-icon icon-wa">💬</span></button>
+            <button class="app-icon-wrapper" onclick="openApp('music')"><span class="app-icon icon-music">🎵</span></button>
         </div>
     </section>
 
@@ -667,11 +545,10 @@ button {
     <section id="app-window" class="screen">
         <header class="app-header">
             <button class="btn-back" onclick="goToScreen('home-screen')">‹ Back</button>
-            <div class="app-header-title" id="app-title">App</div>
+            <div class="app-header-title" id="app-chat-name">App</div>
         </header>
 
-        <div id="app-content" class="app-content"></div>
-
+        <div id="app-content"></div>
         <div id="wa-chat-body" class="chat-body" style="display:none"></div>
         <div id="wa-choices-area" class="chat-input-area" style="display:none"></div>
     </section>
@@ -684,72 +561,99 @@ button {
 
 const CORRECT_PASSCODE = "2210";
 let currentInput = "";
-let chatRun = 0;
+let storyRun = 0;
 
 const auStory = {
     start: {
+        name: "0812-334X-XXXX",
         messages: [
-            {
-                type: "incoming",
-                text: "Dhika, bibi harap, kamu dan kedua sepupumu itu jaga sikap."
-            },
-            {
-                type: "incoming",
-                text: "Jangan bikin malu keluarga besar di acara nanti malam. Paham?"
-            }
+            { type: "system", text: "23:42" },
+            { type: "incoming", text: "P" },
+            { type: "incoming", text: "Tolongin gue... Siapapun yang megang nomor ini." },
+            { type: "incoming", text: "Gue kekunci di Lab Kimia lama. Ada orang di luar bawa pisau, dia nyariin gue." }
         ],
         choices: [
-            {
-                text: "💬 'Iya Bi, Dhika paham kok. Aman.'",
-                nextNode: "ruteAman"
-            },
-            {
-                text: "💬 'Emang sepupu Dhika bikin ulah apa lagi, Bi?'",
-                nextNode: "ruteMisteri"
-            }
+            { text: "💬 Balas: 'Ini siapa? Jangan nge-prank malam-malam!'", nextNode: "balasPrank" },
+            { text: "🚫 Abaikan & langsung blokir nomornya.", nextNode: "endingBlokir" }
         ]
     },
 
-    ruteAman: {
+    balasPrank: {
         messages: [
-            {
-                type: "outgoing",
-                text: "Iya Bi, Dhika paham kok. Aman."
-            },
-            {
-                type: "incoming",
-                text: "Bagus. Oiya, tolong cek lemari kamar tamu, pastikan dikunci. Ada berkas penting di sana."
-            }
+            { type: "outgoing", text: "Ini siapa? Jangan nge-prank malam-malam!" },
+            { type: "incoming", text: "Gue Karin, anak OSIS! Sumpah demi Tuhan ini bukan prank." },
+            { type: "incoming", text: "Lampu sekolah dimatiin semua. Langkah kakinya makin deket ke pintu Lab..." }
         ],
         choices: [
-            {
-                text: "🔄 Ulangi Chat",
-                nextNode: "start"
-            }
+            { text: "📞 'Gue telepon Pak Doni (Satpam) sekarang!'", nextNode: "teleponSatpam" },
+            { text: "🤫 'Sembunyi di lemari belakang! Gue jalan ke sana.'", nextNode: "nekatKeSekolah" }
         ]
     },
 
-    ruteMisteri: {
+    teleponSatpam: {
         messages: [
-            {
-                type: "outgoing",
-                text: "Emang sepupu Dhika bikin ulah apa lagi, Bi?"
-            },
-            {
-                type: "incoming",
-                text: "Mereka berdua ketahuan sembunyiin kunci gudang belakang."
-            },
-            {
-                type: "incoming",
-                text: "Bibi curiga mereka ngerencanain sesuatu yang aneh..."
-            }
+            { type: "outgoing", text: "Gue telepon Pak Doni (Satpam) sekarang!" },
+            { type: "system", text: "Anda mencoba menghubungi Pak Doni..." },
+            { type: "system", text: "Nomor yang dituju tidak aktif." },
+            { type: "incoming", text: "GAK BISA! Pak Doni udah pingsan di pos tadi gue liat 😭" },
+            { type: "incoming", text: "PINTUNYA MULAI DIDOBRAK!" }
         ],
         choices: [
-            {
-                text: "🔄 Ulangi Chat",
-                nextNode: "start"
-            }
+            { text: "🚨 Panggil Polisi sekarang juga", nextNode: "endingPolisi" },
+            { text: "🏃 Nekat lari ke sekolah bawa kayu", nextNode: "endingHoror" }
         ]
+    },
+
+    nekatKeSekolah: {
+        messages: [
+            { type: "outgoing", text: "Sembunyi di lemari belakang! Gue jalan ke sana." },
+            { type: "incoming", text: "Oke... gue masuk lemari. Buruan plis, napas gue sesak..." },
+            { type: "system", text: "Anda sampai di Lab Kimia. Pintu terbuka lebar, pecahan kaca berserakan. Lemari terkunci dari luar." }
+        ],
+        choices: [
+            { text: "🔓 Buka paksa lemarinya", nextNode: "endingSelamat" },
+            { text: "🔍 Cari petunjuk di meja guru", nextNode: "endingJebakan" }
+        ]
+    },
+
+    endingBlokir: {
+        messages: [
+            { type: "system", text: "❌ ENDING: IGNORED IGNORANCE" },
+            { type: "system", text: "Keesokan paginya, sekolah gempar. Karin menghilang tanpa jejak. Anda dihantui rasa bersalah." }
+        ],
+        choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+    },
+
+    endingPolisi: {
+        messages: [
+            { type: "system", text: "🏆 ENDING: THE TRUE SAVIOR" },
+            { type: "system", text: "Polisi berhasil meringkus pelaku. Karin selamat meski trauma berat. Kamu pahlawan malam ini!" }
+        ],
+        choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+    },
+
+    endingHoror: {
+        messages: [
+            { type: "system", text: "💀 ENDING: DOUBLE CASUALTY" },
+            { type: "system", text: "Kamu diserang dari belakang di koridor gelap sebelum mencapai lab. GAME OVER." }
+        ],
+        choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+    },
+
+    endingSelamat: {
+        messages: [
+            { type: "system", text: "🏅 ENDING: HEROIC RESCUE" },
+            { type: "system", text: "Kamu mendobrak lemari dan menyelamatkan Karin tepat waktu. Kalian berhasil kabur bersama!" }
+        ],
+        choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
+    },
+
+    endingJebakan: {
+        messages: [
+            { type: "system", text: "🕸️ ENDING: IT'S A TRAP" },
+            { type: "system", text: "Di lemari bukan Karin, melainkan boneka perekam suara. Pintu lab tertutup otomatis. Kamu terjebak." }
+        ],
+        choices: [{ text: "🔄 Ulangi Cerita", nextNode: "start" }]
     }
 };
 
@@ -763,20 +667,19 @@ function goToScreen(screenId) {
 }
 
 function handleHomeButton() {
+    storyRun++;
     const active = document.querySelector(".screen.active-screen");
-
     if (!active) return;
 
-    if (active.id === "passcode-screen") {
+    if (active.id === "lock-screen") {
+        goToScreen("passcode-screen");
+    } else if (active.id === "passcode-screen") {
         clearPasscode();
         goToScreen("lock-screen");
     } else if (active.id === "app-window") {
-        chatRun++;
         goToScreen("home-screen");
-    } else if (active.id === "home-screen") {
-        goToScreen("lock-screen");
     } else {
-        goToScreen("passcode-screen");
+        goToScreen("lock-screen");
     }
 }
 
@@ -794,8 +697,7 @@ function pressKey(num) {
                 clearPasscode();
                 goToScreen("home-screen");
             } else {
-                document.getElementById("passcode-error").textContent =
-                    "Wrong Passcode. Try again.";
+                document.getElementById("passcode-error").textContent = "Wrong Passcode!";
                 clearPasscode();
             }
         }, 250);
@@ -804,230 +706,179 @@ function pressKey(num) {
 
 function clearPasscode() {
     currentInput = "";
-
     for (let i = 0; i < 4; i++) {
         document.getElementById("dot" + i).classList.remove("filled");
     }
 }
 
-function openApp(appName) {
-    chatRun++;
+function renderChatNode(nodeKey) {
+    const node = auStory[nodeKey];
+    if (!node) return;
 
-    const appWindow = document.getElementById("app-window");
-    const appTitle = document.getElementById("app-title");
-    const appContent = document.getElementById("app-content");
+    const runId = ++storyRun;
     const chatBody = document.getElementById("wa-chat-body");
     const choicesArea = document.getElementById("wa-choices-area");
+    const chatName = document.getElementById("app-chat-name");
 
-    appContent.style.display = "block";
+    chatName.textContent = node.name || "0812-334X-XXXX";
+    chatBody.innerHTML = "";
+    choicesArea.innerHTML = "";
+
+    let index = 0;
+
+    function nextMessage() {
+        if (runId !== storyRun) return;
+
+        if (index >= node.messages.length) {
+            node.choices.forEach(choice => {
+                const button = document.createElement("button");
+                button.className = "wa-btn";
+                button.textContent = choice.text;
+                button.addEventListener("click", () => {
+                    if (runId === storyRun) renderChatNode(choice.nextNode);
+                });
+                choicesArea.appendChild(button);
+            });
+            return;
+        }
+
+        const msg = node.messages[index++];
+        const bubble = document.createElement("div");
+        bubble.className = "bubble " + msg.type;
+        bubble.textContent = msg.text;
+        chatBody.appendChild(bubble);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        setTimeout(nextMessage, 420);
+    }
+
+    nextMessage();
+}
+
+function openApp(appName) {
+    storyRun++;
+
+    const title = document.getElementById("app-chat-name");
+    const content = document.getElementById("app-content");
+    const chatBody = document.getElementById("wa-chat-body");
+    const choices = document.getElementById("wa-choices-area");
+
+    content.style.display = "block";
+    content.className = "";
     chatBody.style.display = "none";
-    choicesArea.style.display = "none";
-
-    appWindow.classList.remove("whatsapp-mode");
+    choices.style.display = "none";
+    content.innerHTML = "";
 
     const apps = {
-        instagram: {
-            title: "Instagram",
-            html: `
-                <div class="info-card">
-                    <h3>📸 dhika.archive</h3>
-                    <p>close friends, random days & little memories.</p>
-                </div>
-                <div class="info-card">
-                    <div class="photo-placeholder">🌅</div>
-                    <h3>last evening</h3>
-                    <p>Some family gatherings never feel simple.</p>
-                </div>
-                <div class="info-card">
-                    <h3>💬 Close Friends Story</h3>
-                    <p>“Kenapa semua orang kayak nyembunyiin sesuatu dari gue?”</p>
-                </div>`
-        },
-
         photos: {
             title: "Photos",
-            html: `
-                <div class="info-card">
-                    <h3>Recents</h3>
-                    <div class="photo-placeholder">🏡</div>
-                    <p>Family House · 4:42 PM</p>
-                </div>
-                <div class="info-card">
-                    <div class="photo-placeholder">🔑</div>
-                    <h3>IMG_2210</h3>
-                    <p>Sebuah foto kunci gudang belakang yang tidak sengaja terambil.</p>
-                </div>`
+            html: `<div class="info-card"><h3>Recents</h3><div class="photo-placeholder">🏫</div><p>School · 23:15</p></div>
+                   <div class="info-card"><div class="photo-placeholder">🔑</div><h3>IMG_2210</h3><p>Foto kunci gudang yang tersimpan di galeri.</p></div>`
         },
-
-        notes: {
-            title: "Notes",
-            html: `
-                <div class="note-paper" contenteditable="true">
-Catatan Dhika
-
-Acara keluarga malam ini.
-
-- Bibi terus mengingatkan soal sikap.
-- Ada berkas penting di lemari kamar tamu.
-- Kenapa sepupu-sepupuku menyembunyikan kunci gudang?
-
-Aku harus cari tahu sendiri.
-                </div>
-                <p style="font-size:11px;color:#ddd;margin-top:10px">
-                Catatan simulasi. Perubahan tidak disimpan setelah halaman ditutup.
-                </p>`
-        },
-
-        settings: {
-            title: "Settings",
-            html: `
-                <div class="setting-row">👤 &nbsp; Apple Account</div>
-                <div class="setting-row">📶 &nbsp; Wi-Fi · Connected</div>
-                <div class="setting-row">🔵 &nbsp; Bluetooth · On</div>
-                <div class="setting-row">🔒 &nbsp; Face ID & Passcode</div>
-                <div class="info-card">
-                    <h3>About this iPhone</h3>
-                    <p>AU Simulator · Interactive Story</p>
-                </div>`
-        },
-
         mail: {
             title: "Mail",
-            html: `
-                <div class="info-card">
-                    <p style="color:#777;font-size:11px">TODAY · 3:15 PM</p>
-                    <h3>Family Gathering — Reminder</h3>
-                    <p>From: Family Committee</p>
-                    <p style="margin-top:12px">Mohon seluruh anggota keluarga hadir tepat waktu. Ada pengumuman penting malam ini.</p>
-                </div>
-                <div class="info-card">
-                    <h3>Unknown Sender</h3>
-                    <p>Subject: About the storage key</p>
-                    <p style="margin-top:8px">Dhika, jangan percaya semua yang kamu dengar malam ini.</p>
-                </div>`
+            html: `<div class="info-card"><p>23:15 · Unknown Sender</p><h3>Jangan datang sendirian.</h3><p>Ada sesuatu yang disembunyikan di Lab Kimia lama. Jangan percaya pesan berikutnya.</p></div>`
         },
+        weather: {
+            title: "Weather",
+            html: `<div class="info-card"><h3>🌙 Night forecast</h3><p>Cuaca tidak tersedia dalam simulasi ini.</p></div>`
+        },
+        calendar: {
+            title: "Calendar",
+            html: `<div class="info-card"><h3>Thursday, October 22</h3><p>23:30 — School incident</p><p>23:45 — Unknown caller</p></div>`
+        },
+        notes: {
+            title: "Notes",
+            html: `<div class="note-paper" contenteditable="true">CATATAN
 
+1. Ada orang terkunci di Lab Kimia.
+2. Satpam tidak bisa dihubungi.
+3. Kunci gudang ditemukan di dekat meja guru.
+
+Apa hubungannya semua ini?</div>`
+        },
+        maps: {
+            title: "Maps",
+            html: `<div class="info-card"><h3>📍 School</h3><p>Lokasi fiktif dalam cerita. Peta asli tidak digunakan.</p></div>`
+        },
+        x: {
+            title: "X",
+            html: `<div class="info-card"><h3>Trending at school</h3><p>@anon: Ada yang lihat lampu gedung lama menyala tengah malam?</p></div>
+                   <div class="info-card"><p>@karin_os: Kalau kalian baca ini, tolong cari aku.</p></div>`
+        },
+        settings: {
+            title: "Settings",
+            html: `<div class="setting-row">👤 Apple Account</div><div class="setting-row">📶 Wi-Fi · Connected</div><div class="setting-row">🔒 Face ID & Passcode</div><div class="info-card"><h3>AU Simulator</h3><p>Interactive fictional story</p></div>`
+        },
         camera: {
             title: "Camera",
-            html: `
-                <div class="photo-placeholder" style="height:300px">📷</div>
-                <div class="info-card">
-                    <h3>Camera Simulator</h3>
-                    <p>Kamera ini hanya simulasi. Tidak mengakses kamera asli perangkat.</p>
-                </div>`
+            html: `<div class="photo-placeholder" style="height:260px">📷</div><div class="info-card"><h3>Camera Simulator</h3><p>Kamera hanya simulasi dan tidak mengakses kamera asli.</p></div>`
         },
+        clock: {
+            title: "Clock",
+            html: `<div class="info-card"><h3 id="clock-display">16:53</h3><p>World Clock · Jakarta</p><p>Alarm · 23:45</p></div>`
+        },
+        journal: {
+            title: "Journal",
+            html: `<div class="note-paper" contenteditable="true">Dear Journal,
 
+Aku tidak tahu siapa yang mengirim pesan itu. Tapi aku harus mencari tahu apa yang terjadi di Lab Kimia.
+
+— Dhika</div>`
+        },
+        instagram: {
+            title: "Instagram",
+            html: `<div class="info-card"><h3>📸 dhika.archive</h3><p>close friends, random days & little memories.</p></div>
+                   <div class="info-card"><div class="photo-placeholder">🌃</div><h3>23:42</h3><p>“Malam ini rasanya ada yang salah.”</p></div>`
+        },
         phone: {
             title: "Phone",
-            html: `
-                <div class="info-card">
-                    <h3>Recents</h3>
-                    <p>📞 Bibi · 15:48</p>
-                    <p style="margin-top:12px">📞 Unknown Number · 15:51</p>
-                    <p style="margin-top:12px">📞 Sepupu · 16:02</p>
-                </div>
-                <button class="wa-btn" style="width:100%"
-                    onclick="alert('Panggilan simulasi. Tidak melakukan panggilan sungguhan.')">
-                    📞 Call Unknown Number
-                </button>`
+            html: `<div class="info-card"><h3>Recents</h3><p>📞 Unknown Number · 23:42</p><p>📞 Pak Doni · Call Failed</p></div><button class="wa-btn" onclick="alert('Simulasi panggilan: tidak ada panggilan sungguhan.')">📞 Call Unknown Number</button>`
+        },
+        safari: {
+            title: "Safari",
+            html: `<div class="info-card"><h3>Search the web</h3><p>Hasil pencarian simulasi: “Insiden Lab Kimia — arsip sekolah.”</p></div>`
+        },
+        music: {
+            title: "Music",
+            html: `<div class="info-card"><div class="photo-placeholder">🎵</div><h3>Last Message</h3><p>Fictional soundtrack · Preview unavailable</p></div>`
         }
     };
 
     if (appName === "whatsapp") {
-        appTitle.textContent = "Bibi";
-        appWindow.classList.add("whatsapp-mode");
-        appContent.style.display = "none";
+        content.style.display = "none";
         chatBody.style.display = "flex";
-        choicesArea.style.display = "flex";
-
+        choices.style.display = "flex";
         renderChatNode("start");
     } else {
         const app = apps[appName];
-
         if (!app) return;
 
-        appTitle.textContent = app.title;
-        appContent.innerHTML = app.html;
+        title.textContent = app.title;
+        content.innerHTML = app.html;
+
+        if (appName === "clock") {
+            document.getElementById("clock-display").textContent =
+                new Date().toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+        }
     }
 
     goToScreen("app-window");
 }
 
-function renderChatNode(nodeKey) {
-    const node = auStory[nodeKey];
-
-    if (!node) return;
-
-    const runId = ++chatRun;
-    const chatBody = document.getElementById("wa-chat-body");
-    const choicesArea = document.getElementById("wa-choices-area");
-
-    chatBody.innerHTML = "";
-    choicesArea.innerHTML = "";
-
-    const messages = node.messages || [];
-    let index = 0;
-
-    function showNextMessage() {
-        if (runId !== chatRun) return;
-
-        if (index >= messages.length) {
-            showChoices();
-            return;
-        }
-
-        const msg = messages[index++];
-        const bubble = document.createElement("div");
-
-        bubble.className = "bubble " + msg.type;
-        bubble.textContent = msg.text;
-
-        chatBody.appendChild(bubble);
-        chatBody.scrollTop = chatBody.scrollHeight;
-
-        setTimeout(showNextMessage, 350);
-    }
-
-    function showChoices() {
-        if (runId !== chatRun) return;
-
-        choicesArea.innerHTML = "";
-
-        (node.choices || []).forEach(choice => {
-            const button = document.createElement("button");
-            button.className = "wa-btn";
-            button.textContent = choice.text;
-
-            button.addEventListener("click", () => {
-                if (runId === chatRun) {
-                    renderChatNode(choice.nextNode);
-                }
-            });
-
-            choicesArea.appendChild(button);
-        });
-    }
-
-    showNextMessage();
-}
-
-/* Clock and date */
 function updateClock() {
     const now = new Date();
+    const time = now.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    });
 
-    document.getElementById("status-time").textContent =
-        now.toLocaleTimeString("id-ID", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false
-        });
-
-    document.getElementById("lock-clock").textContent =
-        now.toLocaleTimeString("id-ID", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false
-        });
+    document.getElementById("status-time").textContent = time;
+    document.getElementById("lock-clock").textContent = time;
 
     document.getElementById("lock-date").textContent =
         now.toLocaleDateString("en-US", {
@@ -1035,6 +886,11 @@ function updateClock() {
             month: "long",
             day: "numeric"
         });
+
+    document.getElementById("widget-day").textContent =
+        now.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
+
+    document.getElementById("widget-date").textContent = now.getDate();
 }
 
 updateClock();
